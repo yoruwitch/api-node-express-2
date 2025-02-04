@@ -1,25 +1,17 @@
 import mongoose from "mongoose";
+import BaseError from "../errors/baseError.js";
+import IncorrectRequest from "../errors/IncorrectRequest.js";
+import ValidationError from "../errors/ValidationError.js";
 
 // eslint-disable-next-line no-unused-vars
 function errorHandler(erro, req, res, next) {
     console.log(erro);
     if (erro instanceof mongoose.Error.CastError) {
-        res.status(400).send({
-            message: "Um ou mais dados fornecidos estão incorretos.",
-        });
+        new IncorrectRequest().sendResult(res);
     } else if (erro instanceof mongoose.Error.ValidationError) {
-        /*
-        Esse método vai nos retornar um array com os valores de cada propriedade do objeto. 
-        */
-        const mensagensErro = Object.values(erro.errors)
-            .map((erro) => erro.message)
-            .join(";");
-        res.status(400).send({
-            message: `Os seguintes erros foram encontrados: ${mensagensErro}`,
-        });
+        new ValidationError(erro).sendResult(res);
     } else {
-        res.status(500).send({ message: "Erro interno de servidor." });
+        new BaseError().sendResult(res);
     }
 }
-
 export default errorHandler;

@@ -1,7 +1,12 @@
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-mongoose.connect(process.env.MONGODB_URI);
+dotenv.config();
 
-let db = mongoose.connection;
+const dbURI = process.env.MONGODB_URI;
+
+mongoose.connect(dbURI);
+
+const db = mongoose.connection;
 
 export default db;
